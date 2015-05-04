@@ -8,9 +8,9 @@ Chat room
 4. client side executable name is b013040040_client, run  `./b013040040_client` to start client.
 
 ### Clent slide command ###
-1. `help`                           - display command u can use
-2. `connect [ip] [port] [name]`     - connect to server
-3. `chat [name] [name]... ["message"]` - send message to all name
-4. `color [number]`                 - select u want color message
-5. `bye`                            - disconnect
-6. `exit`                           - exit program
+* `help`                           - display command u can use
+* `connect [ip] [port] [name]`     - connect to server
+* `chat [name] [name]... ["message"]` - send message to all name
+* `color [number]`                 - select u want color message
+* `bye`                            - disconnect
+* `exit`                           - exit program
