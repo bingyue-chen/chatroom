@@ -12,7 +12,7 @@ public:
     User(int fd, string name, string ip, int port);
     bool send(string message);
     void offline();
-    void online(int fd, int port, string name);
+    void online(int fd, int port, string ip);
     bool is_online();
     string get(string key);
     void send_offline_message();

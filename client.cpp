@@ -81,7 +81,7 @@ int main(){
                     close(client_socket);
                 }
                 else if(n == IS_ONLINE){
-                    cout << get_color(COLOR_RED) + "your ip is login" + get_color(COLOR_RESET) << endl;
+                    cout << get_color(COLOR_RED) + "this name had logged in" + get_color(COLOR_RESET) << endl;
                     close(client_socket);
                 }
                 else{

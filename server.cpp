@@ -79,7 +79,7 @@ static bool doLogin(int fd, string ip, int port){
         usermanager.broadcast("<server> : New user " + name + " is login !\n");
     else if(n == OLD_USER){
         usermanager.broadcast("<server> : " + name + " is online !\n");
-        usermanager.push_offline_line(ip);
+        usermanager.push_offline_line(fd);
     }
     else
         close(fd);
@@ -105,12 +105,12 @@ static bool doSend(int fd){
     string message = input.substr(found+1, input.size() - found);
 
     if(name == "color"){
-        usermanager.setcolor(get_ip(fd), string_to_int(message));
+        usermanager.setcolor(fd, string_to_int(message));
         return true;
     }
 
 
-    n = usermanager.send_msg(get_ip(fd), message, name);
+    n = usermanager.send_msg(fd, message, name);
 
     int w;
 
@@ -120,8 +120,9 @@ static bool doSend(int fd){
 }
 
 void doExit(int fd, fd_set* fs){
-    usermanager.user_exit(get_ip(fd));
+    string name = usermanager.user_exit(fd);
     int w = write(fd, "bye", socket_buffer_size);
     close(fd);
     FD_CLR(fd, fs);
+    usermanager.broadcast(name + " exit chat room\n");
 }

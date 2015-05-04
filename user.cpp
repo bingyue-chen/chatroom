@@ -31,14 +31,17 @@ bool User::send(string message){
 
 void User::offline(){
     this->active = false;
+    this->fd = -1;
+    this->port = -1;
+    this->ip = "";
 }
 
-void User::online(int fd, int port, string name){
+void User::online(int fd, int port, string ip){
 
     this->active = true;
     this->fd = fd;
     this->port = port;
-    this->name = name;
+    this->ip = ip;
 }
 
 void User::send_offline_message(){
@@ -77,7 +80,7 @@ string User::get_now_time(){
     int Min    = localTime->tm_min;
     int Sec    = localTime->tm_sec;
 
-    string s =  int_to_string(Year) + "//" + int_to_string(Month) + "//" + int_to_string(Day);
+    string s =  int_to_string(Year) + "/" + int_to_string(Month) + "/" + int_to_string(Day);
            s += " " + int_to_string(Hour) + ":" + int_to_string(Min) + ":" + int_to_string(Sec);
 
     return s;

@@ -5,7 +5,7 @@ Usermanage::Usermanage(){
 }
 
 int Usermanage::add_user(User user){
-    int found = this->find_user("ip", user.get("ip"));
+    int found = this->find_user("name", user.get("name"));
 
     if(found == -1){
         if(this->is_same_name(user.get("name"))) return FAILED_NAME;
@@ -15,8 +15,8 @@ int Usermanage::add_user(User user){
     }
     else{
         if(this->users[found].is_online()) return IS_ONLINE;
-        if((user.get("name") != this->users[found].get("name")) && this->is_same_name(user.get("name"))) return FAILED_NAME;
-        this->users[found].online(string_to_int(user.get("fd")), string_to_int(user.get("port")), user.get("name"));
+        //if((user.get("name") != this->users[found].get("name")) && this->is_same_name(user.get("name"))) return FAILED_NAME;
+        this->users[found].online(string_to_int(user.get("fd")), string_to_int(user.get("port")), user.get("ip"));
         this->active_user_amount++;
         return OLD_USER;
     }
@@ -24,13 +24,19 @@ int Usermanage::add_user(User user){
     return FAILED;
 }
 
-void Usermanage::user_exit(string user_ip){
-    int found = this->find_user("ip", user_ip);
+string Usermanage::user_exit(int fd){
+
+    string name = "";
+
+    int found = this->find_user("fd", int_to_string(fd));
 
     if(found != -1){
         this->users[found].offline();
         this->active_user_amount--;
+        name = this->users[found].get("name");
     }
+
+    return name;
 }
 
 bool Usermanage::is_same_name(string name){
@@ -48,8 +54,8 @@ int Usermanage::find_user(string key, string value){
     return -1;
  }
 
-int Usermanage::send_msg(string from_user_ip, string message, string to_user_name){
-    int from = this->find_user("ip", from_user_ip);
+int Usermanage::send_msg(int from_fd, string message, string to_user_name){
+    int from = this->find_user("fd", int_to_string(from_fd));
     int to   = this->find_user("name", to_user_name);
 
     if(from == -1 || to == -1) return USER_NOT_EXIST;
@@ -90,15 +96,15 @@ void Usermanage::show(){
     printf("%-5donline\n", this->active_user_amount);
 }
 
-void Usermanage::push_offline_line(string ip){
-    int found = this->find_user("ip", ip);
+void Usermanage::push_offline_line(int fd){
+    int found = this->find_user("fd", int_to_string(fd));
 
     if(found != -1 && this->users[found].is_online())
         this->users[found].send_offline_message();
 }
 
-void Usermanage::setcolor(string ip, int color){
-    int found = this->find_user("ip", ip);
+void Usermanage::setcolor(int fd, int color){
+    int found = this->find_user("fd", int_to_string(fd));
 
     if(found != -1)
         this->users[found].setcolor(color);
