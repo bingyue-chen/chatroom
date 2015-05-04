@@ -63,3 +63,22 @@ string get_ip(int fd){
 int get_port(struct sockaddr_in* addr){
     return ntohs((*addr).sin_port);
 }
+
+string get_color(int i){
+
+    switch(i){
+        case COLOR_RESET:     return "\x1b[0m";
+        case COLOR_RED:       return "\x1b[31m";
+        case COLOR_GREEN:     return "\x1b[32m";
+        case COLOR_YELLOW:    return "\x1b[33m";
+        case COLOR_BLUE:      return "\x1b[34m";
+        case COLOR_MAGENTA:   return "\x1b[35m";
+        case COLOR_CYAN:      return "\x1b[36m";
+        case COLOR_B_RED:     return "\x1b[1;31m";
+        case COLOR_B_GREEN:   return "\x1b[1;32m";
+        case COLOR_B_YELLOW:  return "\x1b[1;33m";
+        case COLOR_B_BLUE:    return "\x1b[1;34m";
+        case COLOR_B_MAGENTA: return "\x1b[1;35m";
+        case COLOR_B_CYAN:    return "\x1b[1;36m";
+    }
+}

@@ -7,14 +7,14 @@ User::User(int fd, string name, string ip, int port){
     this->ip = ip;
     this->port = port;
     this->active = true;
+    this->color = -1;
 }
 
 bool User::send(string message){
     int write_size;
     if(this->is_online()){
         write_size = write(this->fd, message.c_str(), socket_buffer_size);
-        if(write_size > 0){
-            //fsync(this->fd);
+        if(write_size >= 0){
             return true;
         }
         else
@@ -22,7 +22,7 @@ bool User::send(string message){
     }
 
     if(!this->is_online()) {
-        message = message + " sent at " + this->get_now_time() + "\n";
+        message = message + "\tsent at " + this->get_now_time() + "\n";
         this->offline_messager.push_back(message);
     }
 
@@ -39,11 +39,14 @@ void User::online(int fd, int port, string name){
     this->fd = fd;
     this->port = port;
     this->name = name;
+}
 
-    while(!this->offline_messager.empty()){
-        this->send(this->offline_messager.back());
-        this->offline_messager.pop_back();
-    }
+void User::send_offline_message(){
+    if(this->is_online())
+        while(!this->offline_messager.empty()){
+            this->send(this->offline_messager.front());
+            this->offline_messager.erase(this->offline_messager.begin());
+        }
 }
 
 bool User::is_online(){
@@ -55,6 +58,7 @@ string User::get(string key){
    else if(key == "ip") return this->ip;
    else if(key == "fd") return int_to_string(this->fd);
    else if(key == "port") return int_to_string(this->port);
+   else if(key == "color") return int_to_string(this->color);
    else return "";
 }
 
@@ -77,4 +81,9 @@ string User::get_now_time(){
            s += " " + int_to_string(Hour) + ":" + int_to_string(Min) + ":" + int_to_string(Sec);
 
     return s;
+}
+
+void User::setcolor(int i){
+    if(i >= 2 && i <= 11)
+        this->color = i;
 }

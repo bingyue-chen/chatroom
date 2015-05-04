@@ -15,6 +15,7 @@ int Usermanage::add_user(User user){
     }
     else{
         if(this->users[found].is_online()) return IS_ONLINE;
+        if((user.get("name") != this->users[found].get("name")) && this->is_same_name(user.get("name"))) return FAILED_NAME;
         this->users[found].online(string_to_int(user.get("fd")), string_to_int(user.get("port")), user.get("name"));
         this->active_user_amount++;
         return OLD_USER;
@@ -54,12 +55,16 @@ int Usermanage::send_msg(string from_user_ip, string message, string to_user_nam
     if(from == -1 || to == -1) return USER_NOT_EXIST;
 
     message = this->users[from].get("name")+ " : " + message + "\n";
+    int from_color = string_to_int(this->users[from].get("color"));
+    if( from_color > 2)
+        message = get_color(from_color) + message + get_color(COLOR_RESET);
 
     if(this->users[to].send(message)) return SEND_SUCCESS;
     else return USER_OFFLINE;
 }
 
 void Usermanage::broadcast(string message){
+    message = get_color(COLOR_B_BLUE) + message + get_color(COLOR_RESET);
     for(unsigned int i = 0; i < this->users.size(); i++){
         if(this->users[i].is_online())
             this->users[i].send(message);
@@ -85,4 +90,17 @@ void Usermanage::show(){
     printf("%-5donline\n", this->active_user_amount);
 }
 
+void Usermanage::push_offline_line(string ip){
+    int found = this->find_user("ip", ip);
+
+    if(found != -1 && this->users[found].is_online())
+        this->users[found].send_offline_message();
+}
+
+void Usermanage::setcolor(string ip, int color){
+    int found = this->find_user("ip", ip);
+
+    if(found != -1)
+        this->users[found].setcolor(color);
+}
 

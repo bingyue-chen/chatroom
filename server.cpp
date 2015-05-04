@@ -71,16 +71,16 @@ static bool doLogin(int fd, string ip, int port){
 
     socket_buffer[n] = '\0';
     string name = char_to_string(socket_buffer);
-
-    /* [0 => new user, 1 => old user, -1 => is online, -2 => same name, -3 => failed] */
     n = usermanager.add_user(User(fd, name, ip, port));
 
     int w = write(fd, int_to_string(n).c_str(), socket_buffer_size);
 
     if(n == NEW_USER)
         usermanager.broadcast("<server> : New user " + name + " is login !\n");
-    else if(n == OLD_USER)
+    else if(n == OLD_USER){
         usermanager.broadcast("<server> : " + name + " is online !\n");
+        usermanager.push_offline_line(ip);
+    }
     else
         close(fd);
 
@@ -103,6 +103,12 @@ static bool doSend(int fd){
     size_t found = input.find_first_of(":");
     string name    = input.substr(0, found);
     string message = input.substr(found+1, input.size() - found);
+
+    if(name == "color"){
+        usermanager.setcolor(get_ip(fd), string_to_int(message));
+        return true;
+    }
+
 
     n = usermanager.send_msg(get_ip(fd), message, name);
 

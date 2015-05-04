@@ -25,6 +25,7 @@ static int doLogin(string name);
 static int doSend(string name, string message);
 static void *receive_messsage( void *argv );
 static int read_server_flag();
+static void show_color_choice();
 
 int main(){
 
@@ -57,22 +58,30 @@ int main(){
         else if(command[0] == "help") showhelpmsg();
         else if(command[0] == "connect"){
             if(command.size() < 4 ){
-                cout << "error command" << endl;
-                cout << "connect [host] [port]    [name]" << endl;
+                cout << get_color(COLOR_RED) + "error command" + get_color(COLOR_RESET) << endl;
+                cout << get_color(COLOR_RED) + "connect [host] [port]    [name]" + get_color(COLOR_RESET) << endl;
             }
             else if(command[3].size() < 5){
-                cout << "name is should be long than 4" << endl;
+                cout << get_color(COLOR_RED) + "name is should be long than 4 words" + get_color(COLOR_RESET) << endl;
+            }
+            else if(is_login){
+                cout << get_color(COLOR_RED) + "you had logged in" + get_color(COLOR_RESET) << endl;
             }
             else if(cout << "connect..."  << endl && doConnect(command[1], command[2]) ){
                 cout << "connect success" << endl;
                 cout << "login..." << endl;
                 int n = doLogin(command[3]);
+                //cout << "n = " << n << endl;
                 if(n == FAILED){
-                    cout << "some thing failed" << endl;
+                    cout << get_color(COLOR_RED) + "some thing failed" + get_color(COLOR_RESET) << endl;
                     close(client_socket);
                 }
                 else if(n == FAILED_NAME){
-                    cout << "invalid name" << endl;
+                    cout << get_color(COLOR_RED) + "invalid name" + get_color(COLOR_RESET) << endl;
+                    close(client_socket);
+                }
+                else if(n == IS_ONLINE){
+                    cout << get_color(COLOR_RED) + "your ip is login" + get_color(COLOR_RESET) << endl;
                     close(client_socket);
                 }
                 else{
@@ -81,16 +90,16 @@ int main(){
                 }
             }
             else{
-                cout << "connect failed" << endl;
+                cout << get_color(COLOR_RED) + "connect failed"+get_color(COLOR_RESET) << endl;
             }
         }
         else if(command[0] == "chat"){
             if(command.size() < 3 ){
-                cout << "error command" << endl;
-                cout << "chat    [name] [name]... [\"message\"]" << endl;
+                cout << get_color(COLOR_RED) + "error command" + get_color(COLOR_RESET) << endl;
+                cout << get_color(COLOR_RED) + "chat    [name] [name]... [\"message\"]" + get_color(COLOR_RESET) << endl;
             }
             else if(!is_login){
-                cout << "in disconnect state, please connect" << endl;
+                cout << get_color(COLOR_RED) + "in disconnect state, please connect" + get_color(COLOR_RESET) << endl;
             }
             else{
                 string message = command[command.size()-1];
@@ -101,29 +110,44 @@ int main(){
                         n = read_server_flag();
                         close(client_socket);
                         is_login = false;
-                        cout << "failed to transmit, disconnect, please connect again";
+                        cout << get_color(COLOR_RED) + "failed to transmit, disconnect, please connect again" + get_color(COLOR_RESET) << endl;
                         break;
                     }
-                    else if(n == USER_NOT_EXIST) cout << command[i] << " not a member of this chatroom" << endl;
-                    else if(n == USER_OFFLINE) cout << command[i] << " is offline" << endl;
+                    else if(n == USER_NOT_EXIST) cout << get_color(COLOR_RED) + command[i] << " not a member of this chatroom" + get_color(COLOR_RESET) << endl;
+                    else if(n == USER_OFFLINE) cout << get_color(COLOR_B_BLUE) + command[i] << " is offline, he/she will see this message whe he/she login" + get_color(COLOR_RESET) << endl;
                 }
             }
         }
-        else if(command[0] == "bye"){
-            if(!is_login){
-                cout << "in disconnect state, please connect" << endl;
+        else if(command[0] == "bye" || command[0] == "exit"){
+            if(command[0] == "bye" && !is_login){
+                cout << get_color(COLOR_RED) + "in disconnect state, please connect" + get_color(COLOR_RESET) << endl;
             }
-            else{
-                int w = write(client_socket, command[0].c_str(), socket_buffer_size);
+            else if(is_login){
+                int w = write(client_socket, "bye", socket_buffer_size);
                 int n;
                 n = read_server_flag();
                 is_login = false;
                 close(client_socket);
                 cout << "disconnect" << endl;
             }
+            if(command[0] == "exit") break;
+        }
+        else if(command[0] == "color"){
+            int color;
+            if(command.size() < 2 || ((color = string_to_int(command[1])) < 2 || color > 11)){
+                cout << get_color(COLOR_RED) + "error command" + get_color(COLOR_RESET) << endl;
+                cout << get_color(COLOR_RED) + "color [number]" + get_color(COLOR_RESET) << endl;
+                show_color_choice();
+            }
+            else if(!is_login){
+                cout << get_color(COLOR_RED) + "in disconnect state, please connect" + get_color(COLOR_RESET) << endl;
+            }
+            else{
+                int w = write(client_socket, (command[0]+":"+command[1]).c_str(), socket_buffer_size);
+            }
         }
         else{
-            cout << "invalid command" << endl;
+            cout << get_color(COLOR_RED) + "invalid command" + get_color(COLOR_RESET) << endl;
         }
     }
 
@@ -137,7 +161,10 @@ int main(){
 static void showhelpmsg(){
     cout << "connect [host] [port]    [name]" << endl;
     cout << "chat    [name] [name]... [\"message\"]" << endl;
+    cout << "color [number]" << endl;
+    show_color_choice();
     cout << "bye" << endl;
+    cout << "exit" << endl;
     cout << "help" << endl << endl;
 }
 
@@ -222,4 +249,13 @@ static int read_server_flag(){
     pthread_mutex_unlock( &lock );
 
     return n;
+}
+
+
+static void show_color_choice(){
+
+    for(int i = 2 ; i <= 11 ; i++){
+        cout << get_color(i) + "display " << i << " color" << get_color(COLOR_RESET) << endl;
+    }
+
 }

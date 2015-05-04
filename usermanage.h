@@ -8,18 +8,14 @@ class Usermanage {
 public:
     Usermanage();
 
-    /* [0 => new user, 1 => old user, -1 => is online, -2 => failed name, -3 => failed] */
     int add_user(User);
-
     void user_exit(string user_ip);
-
-    /* [0 => send success, 1 => user offline, 2 => user not exit] */
     int send_msg(string from_user_ip, string message, string to_user_ip);
-
     void broadcast(string message);
-
     int get_active_user_amount();
     void show();
+    void push_offline_line(string ip);
+    void setcolor(string ip, int color);
 
 private:
     vector<User> users;

@@ -15,9 +15,11 @@ public:
     void online(int fd, int port, string name);
     bool is_online();
     string get(string key);
+    void send_offline_message();
+    void setcolor(int i);
 
 private:
-    int fd, port;
+    int fd, port, color;
     string name, ip;
     bool active;
     vector<string> offline_messager;
