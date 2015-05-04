@@ -10,7 +10,7 @@ Chat room
 ### Clent slide command ###
 1. `help`                           - display command u can use
 2. `connect [ip] [port] [name]`     - connect to server
-3. `chat [name] [name] ["message"]` - send message to all name
+3. `chat [name] [name]... ["message"]` - send message to all name
 4. `color [number]`                 - select u want color message
 5. `bye`                            - disconnect
 6. `exit`                           - exit program
