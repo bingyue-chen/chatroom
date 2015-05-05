@@ -114,7 +114,7 @@ int main(){
                         break;
                     }
                     else if(n == USER_NOT_EXIST) cout << get_color(COLOR_RED) + command[i] << " not a member of this chatroom" + get_color(COLOR_RESET) << endl;
-                    else if(n == USER_OFFLINE) cout << get_color(COLOR_B_BLUE) + command[i] << " is offline, he/she will see this message whe he/she login" + get_color(COLOR_RESET) << endl;
+                    else if(n == USER_OFFLINE) cout << get_color(COLOR_B_BLUE) + command[i] << " is offline, he/she will see this message when he/she login" + get_color(COLOR_RESET) << endl;
                 }
             }
         }
@@ -136,7 +136,7 @@ int main(){
             int color;
             if(command.size() < 2 || ((color = string_to_int(command[1])) < 2 || color > 11)){
                 cout << get_color(COLOR_RED) + "error command" + get_color(COLOR_RESET) << endl;
-                cout << get_color(COLOR_RED) + "color [number]" + get_color(COLOR_RESET) << endl;
+                cout << get_color(COLOR_RED) + "color   [number]" + get_color(COLOR_RESET) << endl;
                 show_color_choice();
             }
             else if(!is_login){
@@ -161,7 +161,7 @@ int main(){
 static void showhelpmsg(){
     cout << "connect [host] [port]    [name]" << endl;
     cout << "chat    [name] [name]... [\"message\"]" << endl;
-    cout << "color [number]" << endl;
+    cout << "color   [number]" << endl;
     show_color_choice();
     cout << "bye" << endl;
     cout << "exit" << endl;
